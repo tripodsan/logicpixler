@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Logic Pixler</title>
+    <style>
+        .wrapper {
+            display: grid;
+            grid-template-columns: 1fr 3fr;
+            grid-gap: 20px;
+        }
+
+        .controls {
+        }
+        #formula {
+            width: 600px;
+            height: 300px;
+            font-size: 20px;
+        }
+        #error {
+            font-size: 20px;
+            color: red;
+        }
+    </style>
+</head>
+<body>
+
+<div class="wrapper">
+
+    <canvas id="myCanvas" width="512" height="512" style="border:1px solid #c3c3c3;">
+        Your browser does not support the HTML5 canvas tag.
+    </canvas>
+
+    <div class="controls">
+        <div id="error"></div>
+        <h3>Formula</h3>
+        <textarea  oninput="repaint()" id="formula">(row == 1 && col == 1) || (row == 1 && col == 3) || (row == 3 && col > 0 && col < 4)</textarea>
+
+        <h4>Examples:</h4>
+        <code>row == 1</code><br>
+        <code>row == 1 && col > 3</code><br>
+
+    </div>
+</div>
+
+<script>
+
+    var c = document.getElementById("myCanvas");
+    var ctx = c.getContext("2d");
+
+    var w = c.width;
+    var h = c.height;
+
+    const CW = 32;
+    const CH = 32;
+
+    function calc(f, row, col) {
+        return eval(f);
+    }
+
+    function repaint() {
+        var f = document.getElementById('formula').value;
+        f = f.trim();
+        console.log(f);
+
+        ctx.clearRect(0, 0, c.width, c.height);
+
+        try {
+            for (var row=0; row<16; row++) {
+                for (var col=0; col<16; col++) {
+                    const x = col * CW;
+                    const y = row * CH;
+
+                    ctx.fillStyle = "#000000";
+                    ctx.strokeStyle="#eeeeee";
+                    ctx.strokeRect(x, y, CW, CH);
+
+                    var result = calc(f, row, col);
+                    console.log(result);
+                    if (result) {
+                        ctx.fillRect(x, y, CW, CH);
+                    }
+                }
+            }
+            document.getElementById('error').innerHTML = "&nbsp;";
+        } catch (e) {
+            document.getElementById('error').innerText = "Error: " + e;
+        }
+
+    }
+
+    repaint();
+</script>
+</body>
+</html>
